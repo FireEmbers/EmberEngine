@@ -1,6 +1,4 @@
-#Ember Engine
-
-## A node module for wildfire simulation
+#Ember Engine: A node module for wildfire simulation
 
 This module is the core function for a  forest fire simulator based on cellular 
 automata and fireLib (Rothermel and friends).
