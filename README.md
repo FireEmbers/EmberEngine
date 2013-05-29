@@ -31,5 +31,12 @@ is created to be loaded in to the CrowdProcess API:
 
 ##Test
 
-test tings with 'test' in test folder
+test tings with 'test' in test folder. eg:
+
+`node test/testFGM.js`
+
+Testing is important. 
+
+In scientific computing testing is called verification. EmberEngine is a port to js of existing
+fire models (eg fireLib) so every module change needs to be verified against the original code
 
