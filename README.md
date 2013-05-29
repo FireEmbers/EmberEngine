@@ -1,15 +1,17 @@
-#Core code for Wildfire 
+#Ember Engine
 
-This module is the core function for a deterministic forest fire simulator based on cellular automata
-and fireLib (Rothermel and friends).
+## A node module for wildfire simulation
+
+This module is the core function for a  forest fire simulator based on cellular 
+automata and fireLib (Rothermel and friends).
 
 ##Usage
 
 To run the module simple do this in a node file:
 
-`var core = require('fireapp');`
+`var emberEngine = require('emberEngine');`
 
-`core(dataUnit, Rows, Cols, aspectArray, slopeArray );`
+`emberEngine(dataUnit, Rows, Cols, aspectArray, slopeArray );`
 
 * **Rows** and **Cols** are the size of the mesh, 
 * **aspectArray** and **slopeArray** are the terrain aspect and slope
