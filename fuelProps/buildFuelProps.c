@@ -64,7 +64,7 @@ int main ( int argc, char *argv[] ){
 
 
 
-model = 1;
+model = 3;
   fprintf(fptr, "Fuel_AreaWtg(catalog,model,particle)\n"     
                 "Fuel_LifeRxFactor(catalog,model,life)\n"    
                 "Fuel_PropFlux(catalog,model)\n"        
@@ -103,6 +103,3 @@ model = 1;
 }
 
 //Print stuff about fuel that maters 
-
-
-

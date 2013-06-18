@@ -10,7 +10,7 @@ constTerrain object is set to NULL if testing malcata terrain, otherwise it cont
 
 */
 
-module.exports = function(ROWS, COLS, MOISTUREPART, WINDU, WINDDIR, callBack, constTerrain) {
+module.exports = function(ROWS, COLS, height, width, MOISTUREPART, WINDU, WINDDIR, callBack, constTerrain) {
 
   var Core = require('..');
 
@@ -18,6 +18,12 @@ module.exports = function(ROWS, COLS, MOISTUREPART, WINDU, WINDDIR, callBack, co
 
   var slopeArray = new Array(ROWS*COLS);
   var aspectArray = new Array(ROWS*COLS);
+  
+  //clcMap init to a brunable fuel model
+  var clcMap = new Array(ROWS*COLS);
+  for (var i = 0; i < clcMap.length; i++) {
+    clcMap[i] = 321;
+  };
 
   var runnerCounter = 2;
 
@@ -63,7 +69,7 @@ module.exports = function(ROWS, COLS, MOISTUREPART, WINDU, WINDDIR, callBack, co
     if (runnerCounter > 0)
       return;
 
-    function Run(dataUnit){return Core(dataUnit, ROWS, COLS, aspectArray, slopeArray);}
+    function Run(dataUnit){return Core(dataUnit, ROWS, COLS, aspectArray, slopeArray, clcMap, height, width);}
 
     var ts = Date.now();
 
