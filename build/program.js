@@ -1,4 +1,5 @@
-;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
+(function(e){if("function"==typeof bootstrap)bootstrap("core",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeCore=e}else"undefined"!=typeof window?window.Core=e():global.Core=e()})(function(){var define,ses,bootstrap,module,exports;
+return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 
 /*
 
@@ -8,45 +9,46 @@ fire growth model (FGM)
 template fuction receives a three element array "dataArray" with moisture[%], wind speed [m/s]
 and wind direction[º from north] 
 
-.replace has to be used in a wrapper function to replace:
-  SLOPEMAP_PC   - Slope Map array
-  ASPECTMAP_PC  - Aspect Map Array
-  ROWS_PC       - Number of Rows
-  COLS_PC       - Number os Columnss
+.other variables:
+  slopeMapPC   - Slope Map array
+  aspectMapPC  - Aspect Map Array
+  clcMapPC     - Corine land cover map 
+  rowsPC       - Number of rows
+  colsPC       - Number os Columnss
+  heightPC     - Map height
+  widthPC      - Map width
 
 */
 
 
 //!!!ACHTUNG - Don't Fuck with the fuel model. 
-// Choose either 'createFuelPropsCustom' or 'createFuelPropsNFFL1'
 
-module.exports = function (dataArray, ROWS_PC, COLS_PC, ASPECTMAP_PC, SLOPEMAP_PC){
+module.exports = function (dataArray, rowsPC, colsPC, aspectMapPC, slopeMapPC, clcMapPC, heightPC, widthPC){
 
   var fireLib = require('./fireLib');
   //var fireLib = require('./slowFGM');
 
-  var ROWS = ROWS_PC;
-  var COLS = COLS_PC;
+  var rows = rowsPC;
+  var cols = colsPC;
   var MOISTUREPART = dataArray[0]/100;             //fraction
   var WINDU = dataArray[1]*196.850393701;          // [m/s] - > ft/min (2.23 m/s = 5mph)
   var WINDDIR =dataArray[2];                       //degrees clockwise from north
 
 
-  var L = metersToFeet(3000);                      //Terrain Length
-  var W = metersToFeet(3000);                       //Terrain Width
+  var H = metersToFeet(heightPC);                      //Terrain Length
+  var W = metersToFeet(widthPC);                       //Terrain Width
 
-  var CellWd = L/ROWS;
-  var CellHt = W/COLS;
+  var CellWd = W/rows;
+  var CellHt = H/cols;
 
   var INF = 9999999999999;
   var smidgen = 1E-6;
 
-  
   var nStencil = 16;
 
   var row, col, nrow, ncol;
   var cell;
-  var cells = ROWS*COLS;
+  var cells = rows*cols;
   var ncell;
   var dCell;
   
@@ -62,29 +64,30 @@ module.exports = function (dataArray, ROWS_PC, COLS_PC, ASPECTMAP_PC, SLOPEMAP_P
   var ignTime;
 
   //create maps
-  var ignMap            = new Array (ROWS*COLS);
-  var ignMapNew         = new Array (ROWS*COLS);    //Used in iterative (Fast) FGM
-  var rosMap            = new Array (ROWS*COLS);
-  var rosMaxMap         = new Array (ROWS*COLS);
-  var ros0Map           = new Array (ROWS*COLS);
-  var rxIntensityMap    = new Array (ROWS*COLS);
-  var moistMap          = new Array (ROWS*COLS); 
-  var windUMap          = new Array (ROWS*COLS); 
-  var windDirMap        = new Array (ROWS*COLS); 
-  var slopeMap          = SLOPEMAP_PC; 
-  var aspectMap         = ASPECTMAP_PC;
-  var phiEffWindMap     = new Array (ROWS*COLS);
-  var eccentricityMap   = new Array (ROWS*COLS);
-  var azimuthMaxMap     = new Array (ROWS*COLS);
+  var ignMap            = new Array (rows*cols);
+  var ignMapNew         = new Array (rows*cols);    //Used in iterative (Fast) FGM
+  var rosMap            = new Array (rows*cols);
+  var rosMaxMap         = new Array (rows*cols);
+  var ros0Map           = new Array (rows*cols);
+  var rxIntensityMap    = new Array (rows*cols);
+  var moistMap          = new Array (rows*cols); 
+  var windUMap          = new Array (rows*cols); 
+  var windDirMap        = new Array (rows*cols); 
+  var slopeMap          = new Array (rows*cols);
+  var aspectMap         = new Array (rows*cols);
+  var phiEffWindMap     = new Array (rows*cols);
+  var eccentricityMap   = new Array (rows*cols);
+  var azimuthMaxMap     = new Array (rows*cols);
 
   //Read file properties, build fuelProps object
   var fuelProps = createFuelPropsNFFL1();
+
 
   initMaps();
 
   FGM();
 
-  for (cell = 0; cell < ROWS*COLS; cell++)
+  for (cell = 0; cell < rows*cols; cell++)
     ignMap[cell] = parseFloat(ignMap[cell].toFixed(2));
 
   return JSON.stringify(ignMap);
@@ -100,9 +103,9 @@ module.exports = function (dataArray, ROWS_PC, COLS_PC, ASPECTMAP_PC, SLOPEMAP_P
       timeNow = timeNext;
       timeNext = INF;
 
-      for ( row = 0; row < ROWS; row++){
-        for ( col = 0; col < COLS; col++){
-          cell = col + COLS*row;
+      for ( row = 0; row < rows; row++){
+        for ( col = 0; col < cols; col++){
+          cell = col + cols*row;
           
           //If the cell burns only in the future, skips and update timeNext if necessary
           //finds the minimum timeNext from the cells ignition times
@@ -120,10 +123,10 @@ module.exports = function (dataArray, ROWS_PC, COLS_PC, ASPECTMAP_PC, SLOPEMAP_P
             //neighbour index calc
             ncol = col + nCol[n];
             nrow = row + nRow[n];
-            ncell = ncol + nrow*COLS;
+            ncell = ncol + nrow*cols;
 
             //Check if neighbour is inbound
-            if ( !(nrow >= 0 && nrow < ROWS && ncol >= 0 && ncol < COLS))
+            if ( !(nrow >= 0 && nrow < rows && ncol >= 0 && ncol < cols))
               continue;
 
 
@@ -233,42 +236,45 @@ function createFuelPropsNFFL1(){
       windDirMap[cell]  = WINDDIR;
       //Aspect in firelib is N=0 and clockwise 
       //while aspect in Grass is E=0 counter-clockwise
-      aspectMap[cell] = (aspectMap[cell] - 90 < 0) ?                            
-                          aspectMap[cell] - 90 + 360  : aspectMap[cell] - 90 ; 
+      aspectMap[cell] = (aspectMapPC[cell] - 90 < 0) ?                            
+                          aspectMapPC[cell] - 90 + 360  : aspectMapPC[cell] - 90 ; 
       aspectMap[cell] = 360 - aspectMap[cell];
       //while in Grass is percentage rise/reach.
 
       //Slope in firelib is a fraction
-      slopeMap[cell]    = slopeMap[cell]/100;
+      slopeMap[cell]    = slopeMapPC[cell]/100;
 
     }
 
     for (cell = 0; cell < cells; cell++)
       ros0Map[cell] = fireLib.noWindNoSlope(cell, fuelProps, moistMap, rxIntensityMap);
-    
+
 
     for (cell = 0; cell < cells; cell++)
-      rosMaxMap[cell] = fireLib.windAndSlope(cell, fuelProps, slopeMap, ros0Map, windUMap, 
-                        windDirMap, aspectMap, azimuthMaxMap, eccentricityMap, 
+      rosMaxMap[cell] = fireLib.windAndSlope(cell, fuelProps, slopeMap, ros0Map, windUMap,
+                        windDirMap, aspectMap, azimuthMaxMap, eccentricityMap,
                         phiEffWindMap, rxIntensityMap);
 
 
     //Ignition point at terrain midle
-    ignMap[Math.floor(COLS/4) + Math.floor(ROWS/4)*COLS] = 0;
-  }
+    ignMap[Math.floor(cols/2) + Math.floor(rows/2)*cols] = 0;
 
-  function loadTerrainMaps(slopeMap, aspectMap) {
-
-    slopeMap = SLOPEMAP_PC;
-
-    aspectMap = ASPECTMAP_PC;
-
+    //the clc maps are used to decide if a cell is burnable or not
+    //Every clc value equal to 32X or 31X is considered to be a custom fuel model
+    //otherwise Ros0 and RosMax are zero
+    for (var n = 0; n<clcMapPC.length; n++){
+      if (  !(/\b32\d\b/.test(clcMapPC[n]) || /\b31\d\b/.test(clcMapPC[n]))  ){
+        ros0Map[n] = 0;
+        rosMaxMap[n] = 0;
+      }
+    }
   }
 
   function feetToMeters(x){
     x *= 0.3048;
     return x;
   }
+
   function metersToFeet(x){
     x *= 3.2808399;
     return x;
@@ -528,5 +534,6 @@ exports.windAndSlope = windAndSlope;
 exports.spreadAnyAzimuth = spreadAnyAzimuth;
 exports.noWindNoSlope = noWindNoSlope;
 
-},{}]},{},[1])
+},{}]},{},[1])(1)
+});
 ;

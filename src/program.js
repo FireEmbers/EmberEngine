@@ -255,7 +255,7 @@ function createFuelPropsNFFL1(){
 
 
     //Ignition point at terrain midle
-    ignMap[Math.floor(cols/4) + Math.floor(rows/4)*cols] = 0;
+    ignMap[Math.floor(cols/2) + Math.floor(rows/2)*cols] = 0;
 
     //the clc maps are used to decide if a cell is burnable or not
     //Every clc value equal to 32X or 31X is considered to be a custom fuel model
