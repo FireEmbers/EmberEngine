@@ -2,7 +2,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      all: ['Gruntfile.js',
+      all: ['<Grunt>  </Grunt>file.js',
             'src/**/*.js']
     },
     browserify: {
@@ -10,14 +10,14 @@ module.exports = function(grunt) {
         src: 'src/program.js',
         dest: 'build/program.js',
         options: {
-          standalone: 'Core'
+          externalize: ['src/program.js']
         }
       },
       debug: {
         src: 'src/program.js',
         dest: 'build/program.debug.js',
         options: {
-          standalone: 'Core',
+          externalize: ['src/program.js'],
           debug: true
         }
       }
@@ -28,13 +28,28 @@ module.exports = function(grunt) {
         dest: 'build/program.min.js'
       }
     },
+    'string-replace': {
+      kit: {
+        files: {
+          'build/program.min.js' : 'build/program.min.js',
+          'build/program.js' : 'build/program.js',
+        },
+        options: {
+          replacements: [{
+            pattern: /\brequire\b/ig,
+            replacement: 'req'
+          }]
+        }
+      }
+    },
     watch: {
       scripts: {
         files: ['src/**/*.js'],
         tasks: ['jshint',
                 'browserify:production',
                 'browserify:debug',
-                'uglify'],
+                 'uglify',
+                 'string-replace'],
         options: {
           nospawn: true
         }
@@ -46,11 +61,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-string-replace');
 
 
   grunt.registerTask('default', ['jshint',
                                  'browserify:production',
-                                 'uglify']);
+                                 'uglify',
+                                 'string-replace']);
 
   grunt.registerTask('debug', ['jshint',
                                'browserify:debug']);

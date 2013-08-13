@@ -60,6 +60,7 @@ test('Ignition Maps Case A', function (t) {
   var WINDU = 1;
   var WINDDIR = 135;
   //NFFL1 CARALHOOOOOOOOO!!!!!!!!!!!!!!!!
+  //ignPoint is floor(Cols/2), floor(Rows/2)S
 
   var validMaps = {};
 
@@ -75,12 +76,19 @@ test('Ignition Maps Case A', function (t) {
   var rendezVous = createRendezVous(3, doTheTest);
   var testMaps = {};
 
-  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50), terrain);
-  wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100), terrain);
-  wrap(150, 150, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(150), terrain);
+  var ts = Date.now();
+  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50, ts, 'A50'), terrain);
 
-  function saveMap(size) {
+  ts = Date.now();
+  wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100, ts, 'A100'), terrain);
+
+  ts = Date.now();
+  wrap(150, 150, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(150, ts, 'A150'), terrain);
+
+  function saveMap(size, timeStart, string) {
     return function(ignMap) {
+
+      console.log(string, (Date.now()-timeStart)/1000 )
       testMaps[size] = ignMap;
       rendezVous();
     };
@@ -128,9 +136,14 @@ test('Ignition Maps Case B', function (t) {
   var rendezVous = createRendezVous(3, doTheTest);
   var testMaps = {};
 
-  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50), terrain);
-  wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100), terrain);
-  wrap(150, 150, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(150), terrain);
+  ts = Date.now();
+  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50, ts, 'B50'), terrain);
+
+  ts = Date.now();
+  wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100, ts, 'B100'), terrain);
+
+  ts = Date.now();
+  wrap(150, 150, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(150, ts, 'B150'), terrain);
 
   function saveMap(size) {
     return function(ignMap) {
@@ -180,8 +193,14 @@ test('Ignition Maps Case C', function (t) {
   var rendezVous = createRendezVous(2, doTheTest);
   var testMaps = {};
 
-  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50), terrain);
-  wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100), terrain);
+  ts = Date.now();
+  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50, ts, 'C50'), terrain);
+
+  ts = Date.now();
+  
+  wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100, ts, 'C100'), terrain);
+
+
 
   function saveMap(size) {
     return function(ignMap) {
