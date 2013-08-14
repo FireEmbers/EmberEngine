@@ -12,7 +12,7 @@
       "url": "undefined/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "build/program.min.js",
+  "main": "src/program.js",
   "engines": {
     "node": {
       "node": ">=0.10.x"
