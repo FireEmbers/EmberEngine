@@ -4,11 +4,11 @@ This module is the core function for a  forest fire simulator based on cellular
 automata and fireLib (Rothermel and friends).
 
 ##Install
-git install git+ssh://git@github.com:FireEmbers/EmberEngine.git
+npm install git+ssh://git@github.com:FireEmbers/EmberEngine.git
 
 ##Usage
 
-To run the module simple do this in a node file:
+To run the module simple do this in a node script:
 
 `var emberEngine = require('emberEngine');`
 
@@ -21,22 +21,22 @@ To run the module simple do this in a node file:
     * dataUnit[1] = WindVeloctity (m/s) 
     * dataUnit[2] = WindDirection (º clockwise from north) 
 
-Function returns an array of igition times in JSON format
+Function returns an array of ignition times in JSON format
 
 ##CrowdProcess usage
 
 The program.js file in src is minified and browserified in build/program.min.js. To create this file just 
 run `grunt` in the module directory.
 
-Next, to crete the Run function to pass to the CP API, just do something like this:
+Next, to create the Run function that will be  passed to the CP API, just do something like this:
 
 ```
 function RunString(){
 
   function Run(dataUnit){
 
-    //req is exposed by broserify so that we can have embersEngine module in the Run function
-    var engine = req('path_to_embersEngine/src/program.js'); 
+    //req is exposed by broserify so that we can have embersEngine module in the Run function that goes to CrowdProcess. The path is weird but it has to be like this.
+    var engine = req('/home/fsousa/src/crp/embers/engine/src/program.js');
 
     return emberEngine(dataUnit, rows, cols, aspectMap, slopeMap, clcMap, height, width);
 
