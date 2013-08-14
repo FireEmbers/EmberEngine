@@ -1,10 +1,10 @@
 {
-  "name": "fireApp",
-  "title": "fireapp",
-  "description": "The best project ever.",
+  "name": "embersengine",
+  "title": "Embers math model",
+  "description": "",
   "version": "0.0.1",
   "author": {
-    "name": "fsousa"
+    "name": "Flávio Sousa"
   },
   "licenses": [
     {
@@ -12,7 +12,7 @@
       "url": "undefined/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "src/program.js",
+  "main": "build/program.min.js",
   "engines": {
     "node": {
       "node": ">=0.10.x"
