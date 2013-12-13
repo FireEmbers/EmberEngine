@@ -85,10 +85,27 @@ module.exports = function (dataArray, rowsPC, colsPC, aspectMapPC, slopeMapPC, c
 
   FGM();
 
-  for (cell = 0; cell < rows*cols; cell++)
+  var active = false;
+  var ignCell;
+  for (cell = 0; cell < rows*cols; cell++){
+    ignCell = ignMap[cell];
+    if ( ignCell === INF )
+      continue;
+
+    if (ignCell === 0 )
+      continue
+
+    active = true;
+
     ignMap[cell] = parseFloat(ignMap[cell].toFixed(2));
 
-  return JSON.stringify(ignMap);
+  }
+
+  if ( !active ){
+    return null;
+  } else {
+    return JSON.stringify(ignMap);
+  }
 
   function FGM(){
 

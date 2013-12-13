@@ -48,6 +48,25 @@ function createRendezVous(count, cb) {
   return function() { if (--count <= 0) cb(); };
 }
 
+test('Test Null ', function (t) {
+
+  var height = 3000;
+  var width = 3000;
+
+  var MOISTUREPART = 20;
+  var WINDU = 0;
+  var WINDDIR = 0;
+  var terrain = {0:0 , 1: 0};//No slope, no aspect
+  //NFFL1 CARALHOOOOOOOOO!!!!!!!!!!!!!!!!
+
+  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, onIgnitionMap, terrain);
+
+  function onIgnitionMap(ignMap){
+    t.ok(ignMap === null, "Null case ok");
+    t.end();
+  } 
+});
+
 test('Ignition Maps Case A', function (t) {
 
   var height = 3000;

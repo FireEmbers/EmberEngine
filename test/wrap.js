@@ -75,11 +75,15 @@ module.exports = function(ROWS, COLS, height, width, MOISTUREPART, WINDU, WINDDI
 
     var ignitionMap = JSON.parse(Run(dataUnit));
 
+    if ( ignitionMap === null ) {
+      return callBack(ignitionMap);
+    }
+
     //console.log(ROWS,COLS,(Date.now()-ts)/1000);
 
     print2D(ignitionMap, 'ignMapFGM'+ ROWS.toString()+'.csv');
 
-    callBack(ignitionMap);
+    return callBack(ignitionMap);
   }
 
   function arrayFromGrassFileNode(fileName, cb, dp) {
@@ -172,7 +176,7 @@ module.exports = function(ROWS, COLS, height, width, MOISTUREPART, WINDU, WINDDI
     return dataMap;
   }
 
-  function stringFromFile(fileName, cb) {
+  function strinFgromFile(fileName, cb) {
 
       /*
         Loads generic file and uses string in the callback 
