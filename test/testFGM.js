@@ -8,7 +8,7 @@
   Fuel Properties of ignMaps of fireLib-C use NFFL Model 1 (DON'T FUCK UP)
 
 */
-
+var join = require('path').join
 var test = require('tap').test;
 
 var wrap = require('./wrap');
@@ -48,26 +48,27 @@ function createRendezVous(count, cb) {
   return function() { if (--count <= 0) cb(); };
 }
 
-test('Test Null ', function (t) {
+// test('Test Null ', function (t) {
 
-  var height = 3000;
-  var width = 3000;
+//   var height = 3000;
+//   var width = 3000;
 
-  var MOISTUREPART = 20;
-  var WINDU = 0;
-  var WINDDIR = 0;
-  var terrain = {0:0 , 1: 0};//No slope, no aspect
-  //NFFL1 CARALHOOOOOOOOO!!!!!!!!!!!!!!!!
+//   var MOISTUREPART = 20;
+//   var WINDU = 0;
+//   var WINDDIR = 0;
+//   var terrain = {0:0 , 1: 0};//No slope, no aspect
+//   //NFFL1 CARALHOOOOOOOOO!!!!!!!!!!!!!!!!
 
-  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, onIgnitionMap, terrain);
+//   wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, onIgnitionMap, terrain);
 
-  function onIgnitionMap(ignMap){
-    t.ok(ignMap === null, "Null case ok");
-    t.end();
-  } 
-});
+//   function onIgnitionMap(ignMap){
+//     t.ok(ignMap === null, "Null case ok");
+//     t.end();
+//   } 
+// });
 
 test('Ignition Maps Case A', function (t) {
+  
 
   var height = 3000;
   var width = 3000;
@@ -85,7 +86,8 @@ test('Ignition Maps Case A', function (t) {
 
   //Load fireLib-C validated maps
   function loadValidMap(size) {
-    validMaps[size] = fileToArray('./ignMapCaseA_'+size+'x'+size+'.map', size*size);
+    var filePath = join('./' , './ignMapCaseA_'+size+'x'+size+'.map');
+    validMaps[size] = fileToArray(filePath, size*size);
   }
 
   loadValidMap(50);
@@ -106,7 +108,6 @@ test('Ignition Maps Case A', function (t) {
 
   function saveMap(size, timeStart, string) {
     return function(ignMap) {
-
       console.log(string, (Date.now()-timeStart)/1000 )
       testMaps[size] = ignMap;
       rendezVous();
@@ -129,114 +130,116 @@ test('Ignition Maps Case A', function (t) {
   }
 });
 
-test('Ignition Maps Case B', function (t) {
+// test('Ignition Maps Case B', function (t) {
 
-  var height = 3000;
-  var width = 3000;
+//   console.log('Test B');
 
-  //Case B tests
-  var terrain = null;
-  var MOISTUREPART = 11;
-  var WINDU = 0;
-  var WINDDIR = 0;
-  //NFFL1 CARALHOOOOOOOOO!!!!!!!!!!!!!!!!
+//   var height = 3000;
+//   var width = 3000;
 
-  var validMaps = {};
+//   //Case B tests
+//   var terrain = null;
+//   var MOISTUREPART = 11;
+//   var WINDU = 0;
+//   var WINDDIR = 0;
+//   //NFFL1 CARALHOOOOOOOOO!!!!!!!!!!!!!!!!
 
-  //Load fireLib-C validated maps
-  function loadValidMap(size) {
-    validMaps[size] = fileToArray('./ignMapCaseB_'+size+'x'+size+'.map', size*size);
-  }
+//   var validMaps = {};
 
-  loadValidMap(50);
-  loadValidMap(100);
-  loadValidMap(150);
+//   //Load fireLib-C validated maps
+//   function loadValidMap(size) {
+//     validMaps[size] = fileToArray('./ignMapCaseB_'+size+'x'+size+'.map', size*size);
+//   }
 
-  var rendezVous = createRendezVous(3, doTheTest);
-  var testMaps = {};
+//   loadValidMap(50);
+//   loadValidMap(100);
+//   loadValidMap(150);
 
-  ts = Date.now();
-  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50, ts, 'B50'), terrain);
+//   var rendezVous = createRendezVous(3, doTheTest);
+//   var testMaps = {};
 
-  ts = Date.now();
-  wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100, ts, 'B100'), terrain);
+//   ts = Date.now();
+//   wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50, ts, 'B50'), terrain);
 
-  ts = Date.now();
-  wrap(150, 150, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(150, ts, 'B150'), terrain);
+//   ts = Date.now();
+//   wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100, ts, 'B100'), terrain);
 
-  function saveMap(size) {
-    return function(ignMap) {
-      testMaps[size] = ignMap;
-      rendezVous();
-    };
-  }
+//   ts = Date.now();
+//   wrap(150, 150, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(150, ts, 'B150'), terrain);
 
-  function doTheTest() {
-    var res;
+//   function saveMap(size) {
+//     return function(ignMap) {
+//       testMaps[size] = ignMap;
+//       rendezVous();
+//     };
+//   }
 
-    res = Res(testMaps[50], validMaps[50], 50, 50 );
-    t.ok( res < 1E-1 , "Case B 50x50 ok"); console.log('\nCase B 50x50 res:',res);
+//   function doTheTest() {
+//     var res;
+
+//     res = Res(testMaps[50], validMaps[50], 50, 50 );
+//     t.ok( res < 1E-1 , "Case B 50x50 ok"); console.log('\nCase B 50x50 res:',res);
     
-    res = Res(testMaps[100], validMaps[100], 100, 100 );
-    t.ok( res < 1E-1, "Case B 100x100 ok"); console.log('Case B 100x100 res:',res);
+//     res = Res(testMaps[100], validMaps[100], 100, 100 );
+//     t.ok( res < 1E-1, "Case B 100x100 ok"); console.log('Case B 100x100 res:',res);
 
-    res = Res(testMaps[150], validMaps[150], 150, 150 );
-    t.ok( res < 1E-1, "Case B 150x150 ok"); console.log('Case B 150x150 res:',res,'\n');
+//     res = Res(testMaps[150], validMaps[150], 150, 150 );
+//     t.ok( res < 1E-1, "Case B 150x150 ok"); console.log('Case B 150x150 res:',res,'\n');
 
-    t.end();
-  }
-});
+//     t.end();
+//   }
+// });
 
 
-test('Ignition Maps Case C', function (t) {
+// test('Ignition Maps Case C', function (t) {
 
-  var height = 3000;
-  var width = 3000;
+//   var height = 3000;
+//   var width = 3000;
 
-  var MOISTUREPART = 11;
-  var WINDU = 0;
-  var WINDDIR = 0;
-  var terrain = {0:0 , 1: 0};//No slope, no aspect
-  //NFFL1 CARALHOOOOOOOOO!!!!!!!!!!!!!!!!
+//   var MOISTUREPART = 11;
+//   var WINDU = 0;
+//   var WINDDIR = 0;
+//   var terrain = {0:0 , 1: 0};//No slope, no aspect
+//   //NFFL1 CARALHOOOOOOOOO!!!!!!!!!!!!!!!!
 
-  var validMaps = {};
+//   var validMaps = {};
 
-  //Load fireLib-C validated maps
-  function loadValidMap(size) {
-    validMaps[size] = fileToArray('./ignMapCaseC_'+size+'x'+size+'.map', size*size);
-  }
+//   //Load fireLib-C validated maps
+//   function loadValidMap(size) {
+//     validMaps[size] = fileToArray('./ignMapCaseC_'+size+'x'+size+'.map', size*size);
+//   }
 
-  loadValidMap(50);
-  loadValidMap(100);
+//   loadValidMap(50);
+//   loadValidMap(100);
 
-  var rendezVous = createRendezVous(2, doTheTest);
-  var testMaps = {};
+//   var rendezVous = createRendezVous(2, doTheTest);
+//   var testMaps = {};
 
-  ts = Date.now();
-  wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50, ts, 'C50'), terrain);
+//   ts = Date.now();
+//   wrap(50, 50, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(50, ts, 'C50'), terrain);
 
-  ts = Date.now();
+//   ts = Date.now();
   
-  wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100, ts, 'C100'), terrain);
+//   wrap(100, 100, height, width, MOISTUREPART, WINDU, WINDDIR, saveMap(100, ts, 'C100'), terrain);
 
 
 
-  function saveMap(size) {
-    return function(ignMap) {
-      testMaps[size] = ignMap;
-      rendezVous();
-    };
-  }
+//   function saveMap(size) {
+//     return function(ignMap) {
+//       testMaps[size] = ignMap;
+//       rendezVous();
+//     };
+//   }
 
-  function doTheTest() {
-    var res;
+//   function doTheTest() {
+//     var res;
 
-    res = Res(testMaps[50], validMaps[50], 50, 50 );
-    t.ok( res < 1E-1 , "Case C 50x50 ok"); console.log('\nCase C: 50x50 res:',res);
+//     res = Res(testMaps[50], validMaps[50], 50, 50 );
+//     t.ok( res < 1E-1 , "Case C 50x50 ok"); console.log('\nCase C: 50x50 res:',res);
     
-    res = Res(testMaps[100], validMaps[100], 100, 100 );
-    t.ok( res < 1E-1, "Case C 100x100 ok"); console.log('Case C: 100x100 res:',res,'\n');
+//     res = Res(testMaps[100], validMaps[100], 100, 100 );
+//     t.ok( res < 1E-1, "Case C 100x100 ok"); console.log('Case C: 100x100 res:',res,'\n');
 
-    t.end();
-  }
-});
+//     t.end();
+//   }
+// });

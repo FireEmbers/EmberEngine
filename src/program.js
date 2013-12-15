@@ -20,10 +20,16 @@ and wind direction[º from north]
 
 
 //!!!ACHTUNG - Don't Fuck with the fuel model. 
+var fireLib = require('./fireLib');
 
 module.exports = function (dataArray, rowsPC, colsPC, aspectMapPC, slopeMapPC, clcMapPC, heightPC, widthPC){
 
-  var fireLib = require('./fireLib');
+  ignIdx =  Math.floor(colsPC/2) + Math.floor(rowsPC/2)*colsPC;
+
+  if (!(/\b32\d\b/.test(clcMapPC[ignIdx]) || /\b31\d\b/.test(clcMapPC[ignIdx])) ){
+      return null;
+  }
+
   //var fireLib = require('./slowFGM');
 
   var rows = rowsPC;
@@ -85,27 +91,7 @@ module.exports = function (dataArray, rowsPC, colsPC, aspectMapPC, slopeMapPC, c
 
   FGM();
 
-  var active = false;
-  var ignCell;
-  for (cell = 0; cell < rows*cols; cell++){
-    ignCell = ignMap[cell];
-    if ( ignCell === INF )
-      continue;
-
-    if (ignCell === 0 )
-      continue
-
-    active = true;
-
-    ignMap[cell] = parseFloat(ignMap[cell].toFixed(2));
-
-  }
-
-  if ( !active ){
-    return null;
-  } else {
-    return JSON.stringify(ignMap);
-  }
+  return JSON.stringify(ignMap);
 
   function FGM(){
 
@@ -193,7 +179,6 @@ module.exports = function (dataArray, rowsPC, colsPC, aspectMapPC, slopeMapPC, c
           }
       }
     }
-
   }
 
   function time(func){
@@ -272,7 +257,9 @@ function createFuelPropsNFFL1(){
 
 
     //Ignition point at terrain midle
-    ignMap[Math.floor(cols/2) + Math.floor(rows/2)*cols] = 0;
+    ignMap[ignIdx] = 0;
+
+
 
     //the clc maps are used to decide if a cell is burnable or not
     //Every clc value equal to 32X or 31X is considered to be a custom fuel model
